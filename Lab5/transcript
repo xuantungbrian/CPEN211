@@ -1,0 +1,124 @@
+# Compile of lab5_top.v was successful.
+# Compile of datapath_tb.v was successful.
+# Compile of ALU.v was successful.
+# Compile of ALU_tb.v was successful.
+# Compile of datapath.v was successful.
+# Compile of shifter_tb.v was successful.
+# Compile of regfile.v was successful.
+# Compile of regfile_tb.v was successful.
+# Compile of shifter.v was successful.
+# 9 compiles, 0 failed with no errors.
+vsim -gui work.ALU_tb
+# vsim -gui work.ALU_tb 
+# Start time: 23:37:58 on Nov 16,2021
+# Loading work.ALU_tb
+# Loading work.ALU
+add wave  \
+sim:/ALU_tb/Ain \
+sim:/ALU_tb/Bin \
+sim:/ALU_tb/ALUop \
+sim:/ALU_tb/err \
+sim:/ALU_tb/out \
+sim:/ALU_tb/Z
+run -all
+# PASSED
+# ** Note: $stop    : E:/Lab5/ALU_tb.v(56)
+#    Time: 610 ps  Iteration: 0  Instance: /ALU_tb
+# Break in Module ALU_tb at E:/Lab5/ALU_tb.v line 56
+write format wave -window .main_pane.wave.interior.cs.body.pw.wf E:/Lab5/wave_ALU.do
+vsim -gui work.datapath_tb
+# End time: 23:38:35 on Nov 16,2021, Elapsed time: 0:00:37
+# Errors: 0, Warnings: 0
+# vsim -gui work.datapath_tb 
+# Start time: 23:38:35 on Nov 16,2021
+# Loading work.datapath_tb
+# Loading work.datapath
+# Loading work.regfile
+# Loading work.decoder3_8
+# Loading work.RLEC
+# Loading work.vDFF
+# Loading work.Mux8
+# Loading work.shifter
+# Loading work.ALU
+# ** Warning: (vsim-3015) E:/Lab5/regfile.v(72): [PCDPC] - Port size (16) does not match connection size (1) for port 'D'. The port definition is at: E:/Lab5/lab5_top.v(130).
+#    Time: 0 ps  Iteration: 0  Instance: /datapath_tb/DUT/status/F0 File: E:/Lab5/lab5_top.v
+# ** Warning: (vsim-3015) E:/Lab5/regfile.v(72): [PCDPC] - Port size (16) does not match connection size (1) for port 'Q'. The port definition is at: E:/Lab5/lab5_top.v(130).
+#    Time: 0 ps  Iteration: 0  Instance: /datapath_tb/DUT/status/F0 File: E:/Lab5/lab5_top.v
+add wave  \
+sim:/datapath_tb/datapath_in \
+sim:/datapath_tb/datapath_out \
+sim:/datapath_tb/Z_out \
+sim:/datapath_tb/write \
+sim:/datapath_tb/vsel \
+sim:/datapath_tb/loada \
+sim:/datapath_tb/loadb \
+sim:/datapath_tb/asel \
+sim:/datapath_tb/bsel \
+sim:/datapath_tb/loadc \
+sim:/datapath_tb/loads \
+sim:/datapath_tb/clk \
+sim:/datapath_tb/readnum \
+sim:/datapath_tb/writenum \
+sim:/datapath_tb/shift \
+sim:/datapath_tb/ALUop \
+sim:/datapath_tb/err
+run -all
+# PASSED
+# ** Note: $stop    : E:/Lab5/datapath_tb.v(187)
+#    Time: 800 ps  Iteration: 0  Instance: /datapath_tb
+# Break in Module datapath_tb at E:/Lab5/datapath_tb.v line 187
+write format wave -window .main_pane.wave.interior.cs.body.pw.wf E:/Lab5/wave_datapath.do
+vsim -gui work.regfile_tb
+# End time: 23:39:24 on Nov 16,2021, Elapsed time: 0:00:49
+# Errors: 0, Warnings: 2
+# vsim -gui work.regfile_tb 
+# Start time: 23:39:24 on Nov 16,2021
+# Loading work.regfile_tb
+# Loading work.regfile
+# Loading work.decoder3_8
+# Loading work.RLEC
+# Loading work.vDFF
+# Loading work.Mux8
+add wave  \
+sim:/regfile_tb/write \
+sim:/regfile_tb/clk \
+sim:/regfile_tb/err \
+sim:/regfile_tb/readnum \
+sim:/regfile_tb/writenum \
+sim:/regfile_tb/data_in \
+sim:/regfile_tb/data_out
+add wave  \
+sim:/regfile_tb/DUT/R0 \
+sim:/regfile_tb/DUT/R1 \
+sim:/regfile_tb/DUT/R2 \
+sim:/regfile_tb/DUT/R3 \
+sim:/regfile_tb/DUT/R4 \
+sim:/regfile_tb/DUT/R5 \
+sim:/regfile_tb/DUT/R6 \
+sim:/regfile_tb/DUT/R7
+run -all
+# PASSED
+# ** Note: $stop    : E:/Lab5/regfile_tb.v(171)
+#    Time: 710 ps  Iteration: 0  Instance: /regfile_tb
+# Break in Module regfile_tb at E:/Lab5/regfile_tb.v line 171
+write format wave -window .main_pane.wave.interior.cs.body.pw.wf E:/Lab5/wave_regfile.do
+vsim -gui work.shifter_tb
+# End time: 23:40:19 on Nov 16,2021, Elapsed time: 0:00:55
+# Errors: 0, Warnings: 0
+# vsim -gui work.shifter_tb 
+# Start time: 23:40:19 on Nov 16,2021
+# Loading work.shifter_tb
+# Loading work.shifter
+add wave  \
+sim:/shifter_tb/in \
+sim:/shifter_tb/shift \
+sim:/shifter_tb/sout \
+sim:/shifter_tb/err
+run -all
+# PASSED
+# ** Note: $stop    : E:/Lab5/shifter_tb.v(44)
+#    Time: 600 ps  Iteration: 0  Instance: /shifter_tb
+# Break in Module shifter_tb at E:/Lab5/shifter_tb.v line 44
+write format wave -window .main_pane.wave.interior.cs.body.pw.wf E:/Lab5/wave_shifter.do
+# End time: 00:04:31 on Nov 17,2021, Elapsed time: 0:24:12
+# Errors: 0, Warnings: 0

@@ -1,0 +1,70 @@
+E:/Lab5/regfile_tb.v {1 {vlog -work work -stats=none E:/Lab5/regfile_tb.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module regfile_tb
+
+Top level modules:
+	regfile_tb
+
+} {} {}} E:/Lab5/datapath.v {1 {vlog -work work -stats=none E:/Lab5/datapath.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module datapath
+
+Top level modules:
+	datapath
+
+} {} {}} E:/Lab5/ALU_tb.v {1 {vlog -work work -stats=none E:/Lab5/ALU_tb.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module ALU_tb
+
+Top level modules:
+	ALU_tb
+
+} {} {}} E:/Lab5/datapath_tb.v {1 {vlog -work work -stats=none E:/Lab5/datapath_tb.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module datapath_tb
+
+Top level modules:
+	datapath_tb
+
+} {} {}} E:/Lab5/shifter.v {1 {vlog -work work -stats=none E:/Lab5/shifter.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module shifter
+
+Top level modules:
+	shifter
+
+} {} {}} E:/Lab5/regfile.v {1 {vlog -work work -stats=none E:/Lab5/regfile.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module regfile
+-- Compiling module decoder3_8
+-- Compiling module Mux8
+-- Compiling module RLEC
+
+Top level modules:
+	regfile
+
+} {} {}} E:/Lab5/shifter_tb.v {1 {vlog -work work -stats=none E:/Lab5/shifter_tb.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module shifter_tb
+
+Top level modules:
+	shifter_tb
+
+} {} {}} E:/Lab5/ALU.v {1 {vlog -work work -stats=none E:/Lab5/ALU.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module ALU
+
+Top level modules:
+	ALU
+
+} {} {}} E:/Lab5/lab5_top.v {1 {vlog -work work -stats=none E:/Lab5/lab5_top.v
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module lab5_top
+-- Compiling module input_iface
+-- Compiling module vDFF
+-- Compiling module sseg
+
+Top level modules:
+	lab5_top
+
+} {} {}}

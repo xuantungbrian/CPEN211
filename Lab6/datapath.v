@@ -1,0 +1,263 @@
+module datapath (clk , readnum, vsel, loada, loadb, shift, asel, bsel, ALUop , loadc, loads, writenum , write, Z_out, datapath_out, sximm5, sximm8, mdata, PC);
+  input [15:0] sximm8, mdata;	
+  input [7:0] PC;
+  output [15:0] datapath_out;
+  input [15:0] sximm5;	//New to MUX B
+  
+  output [2:0] Z_out; //Exteneded to a 3 bit bus
+  input write, loada, loadb, asel, bsel, loadc, loads, clk;
+  input [3:0] vsel;
+  input [2:0] readnum, writenum;
+  input [1:0] shift, ALUop;
+  wire [15:0] data_in, data_out, Ain, Bin, out, in, sout, Aloada;				//Aloada (A) means after 	(B) means before
+  wire [2:0] Z;	//Extended to a 3 bit but
+  wire [15:0] pc16; //out4: out from mux4 in datapath
+  
+  assign pc16 = {8'b0,PC}; //pc16 is the concat of 8-bit 0 with PC, an input into Mux with 4 input to decide data_in of regfile
+  Mux4 M1 (mdata, sximm8, pc16, datapath_out, vsel, data_in); //Instantiate Mux with 4 input, using vsel (onehot) to decide data_in of regfile
+  assign Ain=asel?16'b0:Aloada; //Mux with 2 input, using asel to select Ain for Alu module
+  assign Bin=bsel?sximm5:sout; //Mux with 2 input, using bsel to select Bin for Alu module
+  
+  regfile REGFILE (data_in, writenum, write, readnum, clk, data_out); //Instantiate regfile
+  RLEC A (data_out, loada, clk, Aloada); //Instantiate register with load enable A
+  RLEC B (data_out, loadb, clk, in); //Instantiate register with load enable B 
+  shifter	U1 (in, shift, sout); //Instantiate shifter in B path
+  ALU			U2 (Ain, Bin, ALUop, out, Z); //Instantiate ALU with input Ain and Bin
+  RLEC C (out, loadc, clk, datapath_out); //Instantiate register with load enable to give datapath_out
+  RLEC #(3) status (Z, loads, clk, Z_out); //Instantiate register with load enable to give 3 bit status
+endmodule
+
+
+
+module regfile(data_in, writenum, write, readnum, clk, data_out);
+	input write,  clk;
+	input [2:0] readnum, writenum;
+	input [15:0] data_in;
+	output [15:0] data_out;
+	wire [15:0] R0, R1, R2, R3, R4, R5, R6, R7;
+	wire [7:0] AAND,BAND;
+	wire [7:0] MUX;
+	
+	decoder3_8 D0 (writenum,BAND); //decoder 3 bit binary to 8 bit onehot
+	decoder3_8 D1 (readnum, MUX); //decoder 3 bit binary to 8 bit onehot
+	
+	assign AAND[0]=BAND[0] & write; //AND gate for each bit of onehot code of writenum (after decode) and write
+	assign AAND[1]=BAND[1] & write; //AND gate for each bit of onehot code of writenum (after decode) and write
+	assign AAND[2]=BAND[2] & write; //AND gate for each bit of onehot code of writenum (after decode) and write
+	assign AAND[3]=BAND[3] & write; //AND gate for each bit of onehot code of writenum (after decode) and write
+	assign AAND[4]=BAND[4] & write; //AND gate for each bit of onehot code of writenum (after decode) and write
+	assign AAND[5]=BAND[5] & write; //AND gate for each bit of onehot code of writenum (after decode) and write
+	assign AAND[6]=BAND[6] & write; //AND gate for each bit of onehot code of writenum (after decode) and write
+	assign AAND[7]=BAND[7] & write; //AND gate for each bit of onehot code of writenum (after decode) and write
+	
+	RLEC r0 (data_in, AAND[0], clk, R0); //Register with load enable to write and remember R0
+	RLEC r1 (data_in, AAND[1], clk, R1); //Register with load enable to write and remember R1
+	RLEC r2 (data_in, AAND[2], clk, R2); //Register with load enable to write and remember R2
+	RLEC r3 (data_in, AAND[3], clk, R3); //Register with load enable to write and remember R3
+	RLEC r4 (data_in, AAND[4], clk, R4); //Register with load enable to write and remember R4
+	RLEC r5 (data_in, AAND[5], clk, R5); //Register with load enable to write and remember R5
+	RLEC r6 (data_in, AAND[6], clk, R6); //Register with load enable to write and remember R6
+	RLEC r7 (data_in, AAND[7], clk, R7); //Register with load enable to write and remember R7
+	
+	Mux8 M0 (MUX, R0, R1, R2, R3, R4, R5, R6, R7, data_out); //Mux with 8 inputs R0 to R7, using onehot code readnum (after decode) to decide data_out 
+	
+endmodule
+
+
+
+module decoder3_8(in, out); 
+	input [2:0] in;
+	output [7:0] out;
+	wire [7:0] out=1<<in;
+endmodule
+
+
+
+module Mux4(mdata, sximm8, pc8, C, vsel, out);
+	input [15:0] mdata, sximm8, pc8, C;
+	input [3:0] vsel;
+	output reg [15:0] out;
+	always @* begin //decide out using cases of vsel
+		case (vsel)
+			4'b0001: out <= C;
+			4'b0010: out <= pc8;
+			4'b0100: out <= sximm8;
+			4'b1000: out <= mdata;
+			default: out <= 16'bxxxxxxxxxxxxxxxx;
+		endcase
+	end
+endmodule
+
+
+
+module Mux8(onehot, R0, R1, R2, R3, R4, R5, R6, R7, data_out);
+	input [15:0] R0, R1, R2, R3, R4, R5, R6, R7;
+	input [7:0] onehot;
+	output reg [15:0] data_out;
+	always @* begin //deciding data_out of regfile using cases of onehot code input
+		case (onehot)
+		8'b00000001: data_out <= R0;
+		8'b00000010: data_out <= R1;
+		8'b00000100: data_out <= R2;
+		8'b00001000: data_out <= R3;
+		8'b00010000: data_out <= R4;
+		8'b00100000: data_out <= R5;
+		8'b01000000: data_out <= R6;
+		8'b10000000: data_out <= R7;
+		default: data_out <= 16'bxxxxxxxxxxxxxxxx;
+		endcase
+	end
+endmodule
+
+
+module vDFF(clk,D,Q); 
+  parameter n=1;
+  input clk;
+  input [n-1:0] D;
+  output [n-1:0] Q;
+  reg [n-1:0] Q;
+
+  always @(posedge clk)	//When posedge, Q will equal D
+    Q <= D;
+endmodule
+		
+
+		
+module RLEC (in, load, clk, out);	//RLEC is the load block a, b, c, status
+	parameter n=16;
+	input [n-1:0] in;
+	input load, clk;
+	output [n-1:0] out;
+	reg [n-1:0] med2;
+	vDFF #(16) F0(clk, med2, out); //if posedge, out=med2 (a medium wire)
+	always @* begin //decide med2 using input load, load=1, med2 receive the new value, load=0, med2 receive the output value from DFF, otherwise, med2=16'bx
+		case (load)
+		1'b1:med2=in;		
+		1'b0:med2=out;
+		default:med2=16'bx;
+		endcase
+	end
+endmodule
+
+
+
+module ALU(Ain, Bin, ALUop, out, status);
+  input [15:0] Ain, Bin;
+  input [1:0] ALUop;
+  output [15:0] out;		//Declarations
+  output [2:0] status; // status[2]=N(Negative), [1]=V (Overflow) , [0]=Z (Zero)
+  reg [15:0] out;
+  reg [2:0] status;
+  
+  
+  always @(*) begin //This always block determines which state ALUop will be in and shows the case for each state	Overflow occurs when two positives make the 16th bit negative or when the 16th bit goes negative
+    case (ALUop)																					
+      2'b00: begin 
+        out = Ain + Bin;
+        if ( out == 16'b0) status[0] <=1'b1;
+        else status[0] <= 1'b0;
+        
+        if ( out[15] == 1'b1) status[1] <= 1'b1;				//Two positives making a negative
+	else if (Ain[15]==1'b1 && Bin[15] == 1'b1 && out[15] == 1'b0  ) status [1] <= 1'b1;	
+        else status [1] <= 1'b0;
+                
+        if ( out[15] == 1'b1) status[2] <= 1'b1;		//If MSB is 1, it will be negative, not sure
+        else status[2] <= 1'b0;
+        
+      end 
+
+      
+      2'b01: begin 
+        out = Ain - Bin;			//Subtraction can have a negative value and zero flag
+	status[1] = 0;
+        if ( Ain == Bin) status[0]<= 1'b1;
+        	else status[0] <= 1'b0;
+
+        if ( out[15] == 1'b1) status[2] <= 1'b1;
+		else status[2] <= 1'b0;
+        
+      end 
+        
+        
+      2'b10: begin
+        out <= Ain & Bin;
+	status[1]=1'b0;
+        if ( Ain == Bin) status[0]<= 1'b1;
+        	else status[0] <= 1'b0;
+
+        if ( out[15] == 1'b1) status[2] <= 1'b1;
+		else status[2] <= 1'b0;
+      end 
+
+      2'b11: begin
+        out <= ~Bin;
+	status[1]=1'b0;
+        if ( Bin == 16'b1111111111111111) status[0]<=1'b1;	//~ Function can have zero flag		
+        	else status[0] <= 1'b0;
+        if ( out[15] == 1'b1) status[2] <= 1'b1;
+        	else status[2] <= 1'b0;
+      	end
+      
+	default: status <= 3'bx && out <= 16'bx; 
+    endcase												
+  end  
+endmodule
+
+
+
+
+module shifter(in, shift, sout);	//This is the code of the shifter block
+  input [15:0] in;
+  input [1:0] shift;	//Declarations
+  output [15:0] sout;
+  reg [15:0] sout;
+  
+  always @* begin	//This always block shows each case of shifter and what they will do 
+    case(shift)
+      2'b00 : sout <= in;				//input 0111 = out 0111 STAYS THE SAME
+      2'b01 : sout <= in << 1;	//input 0111 = out 1110 SHIFTS LEFT with zeros
+      2'b10 : sout <= in >> 1;	//input 0111 = out 0011 SHIFTS RIGHT with zeros
+      2'b11 : begin 
+        sout <= in >> 1; //input 0111 = out 0011 SHIFTS RIGHT 
+        sout[15] <= in [15]; // Index 15 swaps value
+      				end
+      default: sout <= {16{1'bx}};
+    endcase
+  end 
+endmodule
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
